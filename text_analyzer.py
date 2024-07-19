@@ -56,8 +56,9 @@ registered_users = {   # dict registrovaných uživatelů
     "liz": "pass123"
 }
 
-username = "ann"#input("username: ")
-password = "pass123"#input("password: ")
+# vyžádání přihlašovacích údajů od uživatele
+username = input("username: ")
+password = input("password: ")
 print(line)
 
 chck_rgstr = (username, password) in registered_users.items()   # stav registrace uživatele True/False
@@ -76,54 +77,48 @@ f"""Welcome to the app, {username}
 We have 3 texts to be analyzed.
 {line}"""
 )
-    choice = int(input("Enter a number btw. 1 and 3 to select: "))   # požadavek na výběr jednoho z TEXTů
-    print(line)
-
-    if not isinstance(choice, int):   # opravit podmínku!!!
+    try:   # "try" blok, který se provede pokud nenastane ValuError
+        choice = int(input("Enter a number btw. 1 and 3 to select: "))   # požadavek na výběr jednoho z TEXTů
         print(line)
-        print(
-"""A number must be selected!
-Terminating the program..."""
-)
-        sys.exit()
-    elif int(choice) not in range(1, 4):   # pokud není volba uživatele v definovaném rozsahu ukončí program
-        print(
+        
+        if choice not in range(1, 4):   # pokud není volba uživatele v definovaném rozsahu ukončí program
+            print(
 """You have to select number btw. 1 and 3!
 Terminating the program..."""
 )
-        sys.exit()
-    else:                                  # pokračuje v programu
-        text = TEXTS[int(choice)-1]   # uloží vybraný text z nabídky do variable
+            sys.exit()
+        else:                                  # pokračuje v programu
+            text = TEXTS[choice - 1]   # uloží vybraný text z nabídky do variable
 
-        # odstranění interpunkce - Stack Overflow
-        table = text.maketrans("", "", string.punctuation)   # překládací tabulka pro "string.translate"
-        text_1 = text.translate(table)                       # odstranění interpunkce z textu
+            # odstranění interpunkce - Stack Overflow
+            table = text.maketrans("", "", string.punctuation)   # překládací tabulka pro "string.translate"
+            text_1 = text.translate(table)                       # odstranění interpunkce z textu
         
-        text_list = text_1.split()   # vytvoření listu jednotlivých slov z textu bez interpunkce
+            text_list = text_1.split()   # vytvoření listu jednotlivých slov z textu bez interpunkce
         
-        # variables pro jednotlivá zadání
-        number_of_words = len(text_list)    # počet slov
-        number_of_title = 0                 # slova začínajících velkým písmenem
-        number_of_upper = 0                 # slova jen s velkými písmeny
-        number_of_lower = 0                 # slova jen s malými písmeny
-        number_of_numerics = 0              # číselné stringy
-        sum_of_numerics = 0                 # součet číselných stringů
+            # variables pro jednotlivá zadání
+            number_of_words = len(text_list)    # počet slov
+            number_of_title = 0                 # slova začínajících velkým písmenem
+            number_of_upper = 0                 # slova jen s velkými písmeny
+            number_of_lower = 0                 # slova jen s malými písmeny
+            number_of_numerics = 0              # číselné stringy
+            sum_of_numerics = 0                 # součet číselných stringů
 
-        # Počítadlo pro jednotlivá zadání
-        # prochází "text_list" položku po položce a pokud se shoduje s podmínkou
-        # zadání příčte do variables
-        for word in text_list:
-            if word.istitle():
-                number_of_title += 1
-            elif word.isupper():
-                number_of_upper += 1
-            elif word.islower():
-                number_of_lower += 1
-            elif word.isnumeric():
-                number_of_numerics += 1
-                sum_of_numerics += int(word)
+            # Počítadlo pro jednotlivá zadání
+            # prochází "text_list" položku po položce a pokud se shoduje s podmínkou
+            # zadání příčte do variables
+            for word in text_list:
+                if word.istitle():
+                    number_of_title += 1
+                elif word.isupper():
+                    number_of_upper += 1
+                elif word.islower():
+                    number_of_lower += 1
+                elif word.isnumeric():
+                    number_of_numerics += 1
+                    sum_of_numerics += int(word)
 
-        print(                                                  # výpis výsledků počítadla
+            print(                                                  # výpis výsledků počítadla
 f"""There are {number_of_words} words in the selected text.
 There are {number_of_title} titlecase words.
 There are {number_of_upper} uppercase words.
@@ -132,16 +127,24 @@ There are {number_of_numerics} numeric strings.
 The sum of all the numbers {sum_of_numerics}
 {line}"""
 )   
-        length_of_word = [len(word) for word in text_list]   # seznam s délkami jednotlivých slov
+            # Sloupcový graf četnosti délek
+            length_of_word = [len(word) for word in text_list]   # seznam s délkami jednotlivých slov pro graf
 
-        # hlavička grafu
-        print(
+            # hlavička grafu
+            print(
 f"""{"LEN": >3}|{"OCCURENCES": ^20}|{"NR.": <3}
 {line}"""
 )        
-        # sloupcový graf četnosti délek slov
-        for i in range(1, max(length_of_word)+1):
-            occ_grph = "*" * length_of_word.count(i)   # "grafické" vyjádření
-            nr_grph = length_of_word.count(i)          # číselné vyjádření
-            #print(f"{str(i).rjust(3)}|{occ_grph.ljust(20)}|{str(nr_grph).ljust(3)}")
-            print(f"{str(i): >3}|{occ_grph: <20}|{str(nr_grph): <3}")
+            # graf
+            for i in range(1, max(length_of_word) + 1):
+                occ_grph = "*" * length_of_word.count(i)   # "grafické" vyjádření
+                nr_grph = length_of_word.count(i)          # číselné vyjádření
+                print(f"{str(i): >3}|{occ_grph: <20}|{str(nr_grph): <3}")
+
+    except ValueError:   # "výjimka" - pokud byla zadána jiná hodnota než integer
+            print(line)
+            print(
+"""A number must be selected!
+Terminating the program..."""
+)
+            sys.exit()
