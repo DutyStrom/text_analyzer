@@ -63,7 +63,6 @@ print(line)
 
 chck_rgstr = (username, password) in registered_users.items()   # stav registrace uživatele True/False
 
-
 if not chck_rgstr:   # ukončení programu, pokud není uživatel registrován
     print(
 f"""username: {username}
@@ -77,7 +76,11 @@ f"""Welcome to the app, {username}
 We have 3 texts to be analyzed.
 {line}"""
 )
-    try:   # "try" blok, který se provede pokud nenastane ValuError
+    
+    # S látkou, kterou jsme probírali na lekcích se mi nedařilo vyhnout vyjímce, když
+    # uživatel zadá jinou hodnotu než integer. Tak jsem použil "try - except" blok.
+    # Nejsem si jistý, jestli je použitý dobře,ale nějak to funguje :)
+    try:   # "try" blok, který se provede pokud nenastane ValueError
         choice = int(input("Enter a number btw. 1 and 3 to select: "))   # požadavek na výběr jednoho z TEXTů
         print(line)
         
@@ -87,10 +90,10 @@ We have 3 texts to be analyzed.
 Terminating the program..."""
 )
             sys.exit()
-        else:                                  # pokračuje v programu
+        else:                          # pokračuje v programu, pokud jsou všechny zadané hodnoty v pořádku
             text = TEXTS[choice - 1]   # uloží vybraný text z nabídky do variable
 
-            # odstranění interpunkce - Stack Overflow
+            # odstranění interpunkce - našel jsem na Stack Overflow
             table = text.maketrans("", "", string.punctuation)   # překládací tabulka pro "string.translate"
             text_1 = text.translate(table)                       # odstranění interpunkce z textu
         
@@ -140,6 +143,7 @@ f"""{"LEN": >3}|{"OCCURENCES": ^20}|{"NR.": <3}
                 occ_grph = "*" * length_of_word.count(i)   # "grafické" vyjádření
                 nr_grph = length_of_word.count(i)          # číselné vyjádření
                 print(f"{str(i): >3}|{occ_grph: <20}|{str(nr_grph): <3}")
+
 
     except ValueError:   # "výjimka" - pokud byla zadána jiná hodnota než integer
             print(line)
